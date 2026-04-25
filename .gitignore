@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pth
+*.zip
+*.jpg
+*.jpeg
+*.png
+datasets/
+.checkpoints/
+.pytest_cache/
+*.egg-info/
+.env
