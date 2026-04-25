@@ -18,6 +18,7 @@ STD = [0.229, 0.224, 0.225]
 
 
 def load_image(path, size=512):
+    Image.MAX_IMAGE_PIXELS = None  # Disable decompression bomb check
     img = Image.open(path).convert('RGB')
     transform = transforms.Compose([
         transforms.Resize((size, size)),
