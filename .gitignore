@@ -8,6 +8,7 @@ uv.lock
 
 # Data & Models (download or regenerate)
 datasets/
+!datasets/*.py
 examples/
 val2017.zip
 download_*.py
