@@ -59,6 +59,22 @@ def train(
     )
 
     net = StyleTransferNet().to(device)
+
+    # Load pretrained weights
+    try:
+        decoder_ckpt = torch.load('./checkpoints/decoder.pth', map_location=device, weights_only=False)
+        # Handle different key names
+        new_state_dict = {}
+        for k, v in decoder_ckpt.items():
+            if k.startswith('decoder.'):
+                new_state_dict[k.replace('decoder.', '')] = v
+            else:
+                new_state_dict[k] = v
+        net.decoder.load_state_dict(new_state_dict, strict=False)
+        print("Loaded pretrained decoder weights")
+    except Exception as e:
+        print(f"Could not load decoder: {e}")
+
     set_requires_grad(net.encoder, False)
     criterion = PerceptualLoss(
         content_weight=content_weight,
