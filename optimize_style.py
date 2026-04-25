@@ -28,8 +28,8 @@ def load_image(path, size=512):
 
 
 def denorm(tensor):
-    mean = torch.tensor(MEAN).view(1, 3, 1, 1)
-    std = torch.tensor(STD).view(1, 3, 1, 1)
+    mean = torch.tensor(MEAN, device=tensor.device).view(1, 3, 1, 1)
+    std = torch.tensor(STD, device=tensor.device).view(1, 3, 1, 1)
     return (tensor * std + mean).clamp(0, 1)
 
 
