@@ -18,3 +18,5 @@ val2017.zip
 uv.lock
 download_*.py
 archive*/
+
+*.mat
