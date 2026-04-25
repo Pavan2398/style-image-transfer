@@ -22,7 +22,7 @@ STD = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1)
 
 
 def denormalize(tensor: torch.Tensor) -> torch.Tensor:
-    return tensor * STD + MEAN
+    return tensor.cpu() * STD.cpu() + MEAN.cpu()
 
 
 def set_requires_grad(model: nn.Module, requires_grad: bool) -> None:
