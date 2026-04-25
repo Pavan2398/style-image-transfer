@@ -11,6 +11,9 @@ class ContentLoss(nn.Module):
         self.criterion = nn.MSELoss()
 
     def forward(self, content_feat: torch.Tensor, output_feat: torch.Tensor) -> torch.Tensor:
+        # Resize to match
+        if content_feat.shape != output_feat.shape:
+            output_feat = F.interpolate(output_feat, size=content_feat.shape[2:], mode='bilinear', align_corners=False)
         return self.criterion(content_feat, output_feat)
 
 
@@ -26,6 +29,9 @@ class StyleLoss(nn.Module):
         return gram
 
     def forward(self, style_feat: torch.Tensor, output_feat: torch.Tensor) -> torch.Tensor:
+        # Resize to match
+        if style_feat.shape != output_feat.shape:
+            output_feat = F.interpolate(output_feat, size=style_feat.shape[2:], mode='bilinear', align_corners=False)
         style_gram = self.gram_matrix(style_feat)
         output_gram = self.gram_matrix(output_feat)
         return F.mse_loss(output_gram, style_gram)
