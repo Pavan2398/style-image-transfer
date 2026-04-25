@@ -59,15 +59,6 @@ def train(
     )
 
     net = StyleTransferNet().to(device)
-
-    decoder_ckpt = torch.load('./checkpoints/decoder.pth', map_location=device, weights_only=False)
-    net.decoder.load_state_dict(decoder_ckpt)
-    print("Loaded pretrained decoder weights")
-
-    encoder_ckpt = torch.load('./checkpoints/vgg_normalised.pth', map_location=device, weights_only=False)
-    net.encoder.load_state_dict(encoder_ckpt)
-    print("Loaded pretrained encoder weights")
-
     set_requires_grad(net.encoder, False)
     criterion = PerceptualLoss(
         content_weight=content_weight,

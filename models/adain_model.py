@@ -18,6 +18,19 @@ class AdaIN(nn.Module):
         return normalized * style_std + style_mean
 
 
+class ConvBlock(nn.Module):
+    def __init__(self, in_channels: int, out_channels: int, kernel_size: int = 3, stride: int = 1, padding: int = 1):
+        super().__init__()
+        self.block = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding),
+            nn.InstanceNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.block(x)
+
+
 class ResidualBlock(nn.Module):
     def __init__(self, channels: int):
         super().__init__()
@@ -34,45 +47,32 @@ class ResidualBlock(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, input_channels: int = 512):
+    def __init__(self):
         super().__init__()
-        c = input_channels
-
         self.decoder = nn.Sequential(
-            nn.Conv2d(c, 256, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(512, 256, 3, 1, 1),
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='nearest'),
-
             ResidualBlock(256),
-
-            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(256, 256, 3, 1, 1),
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='nearest'),
-
             ResidualBlock(256),
-
-            nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(256, 128, 3, 1, 1),
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='nearest'),
-
             ResidualBlock(128),
-
-            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(128, 128, 3, 1, 1),
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='nearest'),
-
             ResidualBlock(128),
-
-            nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(128, 64, 3, 1, 1),
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='nearest'),
-
             ResidualBlock(64),
-
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(64, 64, 3, 1, 1),
             nn.ReLU(inplace=True),
-
-            nn.Conv2d(64, 3, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(64, 3, 3, 1, 1),
             nn.Sigmoid(),
         )
 
@@ -85,11 +85,11 @@ class StyleTransferNet(nn.Module):
         super().__init__()
         self.encoder = self._build_encoder()
         self.adain = AdaIN()
-        self.decoder = Decoder(input_channels=512)
+        self.decoder = Decoder()
 
     def _build_encoder(self) -> nn.Module:
-        from torchvision import models
-        vgg = models.vgg19(weights='VGG19_Weights.IMAGENET1K_V1').features
+        import torchvision.models as models
+        vgg = models.vgg19(weights='IMAGENET1K_V1').features
         encoder = nn.Sequential(*list(vgg.children()))
         return encoder
 
