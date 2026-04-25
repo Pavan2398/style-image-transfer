@@ -8,6 +8,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from PIL import Image
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 import torchvision.transforms as transforms
 import torchvision.models as models
 import numpy as np
