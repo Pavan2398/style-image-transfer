@@ -1,22 +1,25 @@
+# Python
 .venv/
 __pycache__/
 *.pyc
 *.pyo
-*.pth
-*.zip
-*.jpg
-*.jpeg
-*.png
-datasets/
-.checkpoints/
-.pytest_cache/
 *.egg-info/
-.env
+uv.lock
+
+# Data & Models (download or regenerate)
+datasets/
 examples/
 val2017.zip
-*.pdf
-uv.lock
 download_*.py
 archive*/
 
+# Outputs
+*.jpg
+*.jpeg
+*.png
+*.pdf
+
+# Misc
+.env
+.pytest_cache/
 *.mat
