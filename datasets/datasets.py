@@ -14,6 +14,19 @@ from torchvision.datasets import ImageFolder
 MEAN = [0.485, 0.456, 0.406]
 STD = [0.229, 0.224, 0.225]
 
+IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG']
+
+
+def find_images(folder: str) -> list[Path]:
+    folder_path = Path(folder)
+    if not folder_path.exists():
+        return []
+    images = []
+    for ext in IMAGE_EXTENSIONS:
+        images.extend(list(folder_path.glob(f'*{ext}')))
+        images.extend(list(folder_path.glob(f'*/*{ext}')))
+    return images
+
 
 class PairedDataset(Dataset):
     def __init__(
@@ -28,20 +41,15 @@ class PairedDataset(Dataset):
         if isinstance(style_dir, str):
             style_dir = [style_dir]
 
-        self.content_dirs = [Path(d) for d in content_dir]
-        self.style_dirs = [Path(d) for d in style_dir]
-
         self.content_images = []
-        for d in self.content_dirs:
-            self.content_images.extend(list(d.glob('*.jpg')))
-            self.content_images.extend(list(d.glob('*.jpeg')))
-            self.content_images.extend(list(d.glob('*.png')))
+        for d in content_dir:
+            self.content_images.extend(find_images(d))
 
         self.style_images = []
-        for d in self.style_dirs:
-            self.style_images.extend(list(d.glob('*.jpg')))
-            self.style_images.extend(list(d.glob('*.jpeg')))
-            self.style_images.extend(list(d.glob('*.png')))
+        for d in style_dir:
+            self.style_images.extend(find_images(d))
+
+        print(f"Found {len(self.content_images)} content images, {len(self.style_images)} style images")
 
         if transform is None:
             self.transform = transforms.Compose([
